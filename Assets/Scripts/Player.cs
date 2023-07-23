@@ -22,9 +22,30 @@ public class Player : MonoBehaviour
         myTranform = transform;
     }
 
+    private void Start() {
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+
+        if (moveDir != Vector3.zero) {
+            lastInteractDir = moveDir;
+        }
+        bool wasHit = Physics.Raycast(myTranform.position, lastInteractDir, out RaycastHit raycastHit, INTERACT_DISTANCE, countersLayerMask);
+        if (wasHit) {
+            // Shorter alternative to a null check on GetComponent<>()
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) {
+                // Has ClearCounter
+                clearCounter.Interact();
+            }
+        }
+    }
+
     private void Update() {
         HandleMovement();
-        HandleInteractions();
+        //HandleInteractions();
     }
 
     private void HandleInteractions() {
@@ -39,7 +60,7 @@ public class Player : MonoBehaviour
             // Shorter alternative to a null check on GetComponent<>()
             if(raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) {
                 // Has ClearCounter
-                clearCounter.Interact();
+                //clearCounter.Interact();
             }
         }
     }
