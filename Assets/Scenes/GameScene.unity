@@ -714,6 +714,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8633432130589348341, guid: b92e905461cd3a0418cc6242d1718872,
+        type: 3}
+      propertyPath: kitchenObjectSO
+      value: 
+      objectReference: {fileID: 11400000, guid: a9399ef3d2b52894fb9afbd2f5683e4b,
+        type: 2}
     - target: {fileID: 9213300869404361702, guid: b92e905461cd3a0418cc6242d1718872,
         type: 3}
       propertyPath: m_Name
@@ -1101,6 +1107,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8633432130589348341, guid: b92e905461cd3a0418cc6242d1718872,
+        type: 3}
+      propertyPath: kitchenObjectSO
+      value: 
+      objectReference: {fileID: 11400000, guid: ba5addde39abf0643b7827eef4c25fe7,
+        type: 2}
     - target: {fileID: 9213300869404361702, guid: b92e905461cd3a0418cc6242d1718872,
         type: 3}
       propertyPath: m_Name
