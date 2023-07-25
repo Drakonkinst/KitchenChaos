@@ -70,8 +70,6 @@ public class Player : MonoBehaviour
         } else {
             SetSelectedCounter(null);
         }
-
-        Debug.Log(selectedCounter);
     }
 
     private void HandleMovement() {
