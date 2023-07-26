@@ -7,7 +7,7 @@ public class KitchenObject : MonoBehaviour
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
     private Transform myTransform;
-    private ClearCounter clearCounter;
+    private IKitchenObjectParent kitchenObjectParent;
 
     private void Awake() {
         myTransform = transform;
@@ -17,25 +17,25 @@ public class KitchenObject : MonoBehaviour
         return kitchenObjectSO;
     }
 
-    public void SetClearCounter(ClearCounter clearCounter) {
+    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent) {
         // Unset from previous parent if it exists
-        if(this.clearCounter != null) {
-            this.clearCounter.ClearKitchenObject();
+        if(this.kitchenObjectParent != null) {
+            this.kitchenObjectParent.ClearKitchenObject();
         }
 
-        this.clearCounter = clearCounter;
+        this.kitchenObjectParent = kitchenObjectParent;
 
-        if(clearCounter.HasKitchenObject()) {
-            Debug.LogError("Counter already has a KitchenObject!");
+        if(kitchenObjectParent.HasKitchenObject()) {
+            Debug.LogError("Kitchen object parent already has a KitchenObject!");
         }
-        clearCounter.SetKitchenObject(this);
+        kitchenObjectParent.SetKitchenObject(this);
 
         // Update position and hierarchy
-        myTransform.parent = clearCounter.GetKitchenObjectFollowTransform();
+        myTransform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
         myTransform.localPosition = Vector3.zero;
     }
 
-    public ClearCounter GetClearCounter() {
-        return clearCounter;
+    public IKitchenObjectParent GetKitchenObjectParent() {
+        return kitchenObjectParent;
     }
 }
