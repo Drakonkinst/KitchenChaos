@@ -13,12 +13,7 @@ public class KitchenObject : MonoBehaviour
 
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
 
-    private Transform myTransform;
     private IKitchenObjectParent kitchenObjectParent;
-
-    private void Awake() {
-        myTransform = transform;
-    }
 
     public void DestroySelf() {
         kitchenObjectParent.ClearKitchenObject();
@@ -39,8 +34,8 @@ public class KitchenObject : MonoBehaviour
         kitchenObjectParent.SetKitchenObject(this);
 
         // Update position and hierarchy
-        myTransform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
-        myTransform.localPosition = Vector3.zero;
+        transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
+        transform.localPosition = Vector3.zero;
     }
 
     public IKitchenObjectParent GetKitchenObjectParent() {
