@@ -3,14 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter
+public class CuttingCounter : BaseCounter, IHasProgressBar
 {
-    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
+    public event EventHandler<IHasProgressBar.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
-
-    public class OnProgressChangedEventArgs : EventArgs {
-        public float progressNormalized;
-    }
 
     [SerializeField] private CuttingRecipeSO[] cuttingRecipesSOArray;
 
@@ -28,9 +24,7 @@ public class CuttingCounter : BaseCounter
                 
                 KitchenObjectSO inputKitchenObjectSO = GetKitchenObject().GetKitchenObjectSO();
                 CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOForInput(inputKitchenObjectSO);
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-                    progressNormalized = (cuttingProgress * 1.0f) / cuttingRecipeSO.cuttingProgressMax
-                });
+                UpdateProgress(cuttingRecipeSO.cuttingProgressMax);
             }
         } else if (HasKitchenObject() && !player.HasKitchenObject()) {
             // Player takes kitchen object from counter
@@ -49,9 +43,7 @@ public class CuttingCounter : BaseCounter
                 // Progress cutting
                 cuttingProgress++;
 
-                OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-                    progressNormalized = (cuttingProgress * 1.0f) / cuttingRecipeSO.cuttingProgressMax
-                });
+                UpdateProgress(cuttingRecipeSO.cuttingProgressMax);
                 OnCut?.Invoke(this, EventArgs.Empty);
 
                 // Replace object if cutting is finished
@@ -83,6 +75,12 @@ public class CuttingCounter : BaseCounter
             }
         }
         return null;
+    }
+
+    private void UpdateProgress(float cuttingProgressMax) {
+        OnProgressChanged?.Invoke(this, new IHasProgressBar.OnProgressChangedEventArgs {
+            progressNormalized = (cuttingProgress * 1.0f) / cuttingProgressMax
+        });
     }
 }
 
