@@ -14,7 +14,7 @@ public class CuttingCounter : BaseCounter
 
     [SerializeField] private CuttingRecipeSO[] cuttingRecipesSOArray;
 
-    private int cuttingProgress;
+    private int cuttingProgress = 0;
 
     public override void Interact(Player player) {
         if (!HasKitchenObject() && player.HasKitchenObject()) {
