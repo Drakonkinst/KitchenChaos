@@ -27,7 +27,10 @@ public class StoveCounter : BaseCounter, IHasProgressBar
     }
 
     public override void Interact(Player player) {
-        if (!HasKitchenObject() && player.HasKitchenObject()) {
+        bool hasKitchenObject = HasKitchenObject();
+        bool playerHasKitchenObject = player.HasKitchenObject();
+
+        if (!hasKitchenObject && playerHasKitchenObject) {
             // Player puts kitchen object on counter
             KitchenObject kitchenObject = player.GetKitchenObject();
 
@@ -38,12 +41,26 @@ public class StoveCounter : BaseCounter, IHasProgressBar
                 SetFryingTimer(0f);
                 UpdateIsFrying();
             }
-        } else if (HasKitchenObject() && !player.HasKitchenObject()) {
+        } else if (hasKitchenObject && !playerHasKitchenObject) {
             // Player takes kitchen object from counter
             GetKitchenObject().SetKitchenObjectParent(player);
+
+            // Reset current state
             currentFryingRecipeSO = null;
             SetFryingTimer(0f);
             UpdateIsFrying();
+        } else if (hasKitchenObject && playerHasKitchenObject && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+            // Player is holding a plate
+            KitchenObject kitchenObject = GetKitchenObject();
+            bool successfullyAdded = plateKitchenObject.TryAddIngredient(kitchenObject.GetKitchenObjectSO());
+            if (successfullyAdded) {
+                kitchenObject.DestroySelf();
+
+                // Reset current state
+                currentFryingRecipeSO = null;
+                SetFryingTimer(0f);
+                UpdateIsFrying();
+            }
         }
     }
 

@@ -13,7 +13,10 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
     private int cuttingProgress = 0;
 
     public override void Interact(Player player) {
-        if (!HasKitchenObject() && player.HasKitchenObject()) {
+        bool hasKitchenObject = HasKitchenObject();
+        bool playerHasKitchenObject = player.HasKitchenObject();
+
+        if (!hasKitchenObject && playerHasKitchenObject) {
             // Player puts kitchen object on counter
             KitchenObject kitchenObject = player.GetKitchenObject();
 
@@ -26,9 +29,16 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
                 CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOForInput(inputKitchenObjectSO);
                 UpdateProgress(cuttingRecipeSO.cuttingProgressMax);
             }
-        } else if (HasKitchenObject() && !player.HasKitchenObject()) {
+        } else if (hasKitchenObject && !playerHasKitchenObject) {
             // Player takes kitchen object from counter
             GetKitchenObject().SetKitchenObjectParent(player);
+        } else if (hasKitchenObject && playerHasKitchenObject && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+            // Player is holding a plate
+            KitchenObject kitchenObject = GetKitchenObject();
+            bool successfullyAdded = plateKitchenObject.TryAddIngredient(kitchenObject.GetKitchenObjectSO());
+            if (successfullyAdded) {
+                kitchenObject.DestroySelf();
+            }
         }
     }
 
