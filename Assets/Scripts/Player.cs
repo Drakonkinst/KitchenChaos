@@ -29,6 +29,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private Vector3 lastInteractDir;
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
+    private Vector3 targetLookDir;
 
     private void Awake() {
         if(Instance != null) {
@@ -98,7 +99,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
         // Rotate character to direction of movement
         // Use Slerp for rotation, just Lerp for movement
-        myTranform.forward = Vector3.Slerp(myTranform.forward, moveDir, Time.deltaTime * turnSpeed);
+        if (inputVector != Vector2.zero) {
+            targetLookDir = moveDir;
+        }
+        myTranform.forward = Vector3.Slerp(myTranform.forward, targetLookDir, Time.deltaTime * turnSpeed);
     }
 
     // Get direction of movement after wall hugging. Returns null vector if cannot move.

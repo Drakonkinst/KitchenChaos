@@ -13,6 +13,12 @@ public class ContainerCounter : BaseCounter
         if(!player.HasKitchenObject()) {
             GiveKitchenObjectToPlayer(player);
         }
+        if(player.HasKitchenObject() && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
+            bool successfullyAdded = plateKitchenObject.TryAddIngredient(kitchenObjectSO);
+            if(successfullyAdded) {
+                OnPlayerGrabbedObject?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     private void GiveKitchenObjectToPlayer(Player player) {
