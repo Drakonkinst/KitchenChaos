@@ -37,9 +37,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         }
         Instance = this;
         myTranform = transform;
-    }
 
-    private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
         gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }

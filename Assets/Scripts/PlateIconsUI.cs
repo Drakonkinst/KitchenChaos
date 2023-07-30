@@ -11,9 +11,6 @@ public class PlateIconsUI : MonoBehaviour
     private void Awake() {
         // Not making a prefab out of this to reduce prefab clutter, though it is a valid option
         iconTemplate.gameObject.SetActive(false);
-    }
-
-    private void Start() {
         plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
     }
 

@@ -43,7 +43,6 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
     }
 
     public override void InteractAlternate(Player player) {
-        Debug.Log("Interact Alternate");
         if (HasKitchenObject()) {
             KitchenObjectSO inputKitchenObjectSO = GetKitchenObject().GetKitchenObjectSO();
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOForInput(inputKitchenObjectSO);

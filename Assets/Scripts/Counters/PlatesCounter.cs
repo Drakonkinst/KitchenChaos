@@ -29,8 +29,28 @@ public class PlatesCounter : BaseCounter
     }
 
     public override void Interact(Player player) {
-        if(!player.HasKitchenObject() && platesSpawnedAmount > 0) {
-            // Can give player a plate
+        if(platesSpawnedAmount <= 0) {
+            return;
+        }
+
+        if(player.HasKitchenObject()) {
+            // Attempt to put whatever player is holding on a plate and pick it up
+            KitchenObject.SpawnKitchenObject(plateKitchenObjectSO, this);
+            KitchenObject kitchenObject = GetKitchenObject();
+
+            bool successfullyAdded = kitchenObject.TryGetPlate(out PlateKitchenObject plateKitchenObject) && plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO());
+            if (successfullyAdded) {
+                // Valid time, switch player kitchen object with plate
+                player.GetKitchenObject().DestroySelf();
+                plateKitchenObject.SetKitchenObjectParent(player);
+                platesSpawnedAmount--;
+                OnPlateRemoved?.Invoke(this, EventArgs.Empty);
+            } else {
+                // Invalid item, clean up
+                plateKitchenObject.DestroySelf();
+            }
+        } else {
+            // Can give player a plate since they are holding nothing
             platesSpawnedAmount--;
             KitchenObject.SpawnKitchenObject(plateKitchenObjectSO, player);
 

@@ -14,11 +14,8 @@ public class PlateCompleteVisual : MonoBehaviour
     [SerializeField] PlateKitchenObject plateKitchenObject;
     [SerializeField] KitchenObjectSO_GameObject[] kitchenObjectSOGameObjectArray;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
+    private void Awake() {
         plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
-
         foreach (KitchenObjectSO_GameObject kitchenObjectSOGameObject in kitchenObjectSOGameObjectArray) {
             kitchenObjectSOGameObject.gameObject.SetActive(false);
         }

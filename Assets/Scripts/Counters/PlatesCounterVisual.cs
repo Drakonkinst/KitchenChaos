@@ -15,9 +15,6 @@ public class PlatesCounterVisual : MonoBehaviour
 
     private void Awake() {
         plateVisualGameObjectList = new List<GameObject>();
-    }
-
-    private void Start() {
         platesCounter.OnPlateSpawned += PlatesCounter_OnPlateSpawned;
         platesCounter.OnPlateRemoved += PlatesCounter_OnPlateRemoved;
     }
