@@ -8,6 +8,8 @@ public class KitchenGameManager : MonoBehaviour
     public static KitchenGameManager Instance { get; private set; }
 
     public event EventHandler OnStateChanged;
+    public event EventHandler OnGamePaused;
+    public event EventHandler OnGameUnpaused;
 
     private const float WAIT_TO_START_SECONDS = 0.5f;
     private const float COUNTDOWN_TO_START_SECONDS = 3f;
@@ -24,10 +26,23 @@ public class KitchenGameManager : MonoBehaviour
     private float waitingToStartTimer = WAIT_TO_START_SECONDS;
     private float countdownToStartTimer = COUNTDOWN_TO_START_SECONDS;
     private float gamePlayingTimer = GAME_PLAYING_SECONDS;
+    private bool isGamePaused = false;
 
     private void Awake() {
         Instance = this;
         SetGameState(GameState.WaitingToStart);
+    }
+
+    private void Start() {
+        GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+    }
+
+    private void GameInput_OnPauseAction(object sender, EventArgs e) {
+        if(isGamePaused) {
+            UnpauseGame();
+        } else {
+            PauseGame();
+        }
     }
 
     private void Update() {
@@ -72,6 +87,18 @@ public class KitchenGameManager : MonoBehaviour
         // Do nothing
     }
 
+    public void PauseGame() {
+        OnGamePaused?.Invoke(this, EventArgs.Empty);
+        Time.timeScale = 0f;
+        isGamePaused = true;
+    }
+
+    public void UnpauseGame() {
+        OnGameUnpaused?.Invoke(this, EventArgs.Empty);
+        Time.timeScale = 1f;
+        isGamePaused = false;
+    }
+
     private void SetGameState(GameState gameState) {
         this.gameState = gameState;
         OnStateChanged?.Invoke(this, EventArgs.Empty);
@@ -79,7 +106,7 @@ public class KitchenGameManager : MonoBehaviour
     }
 
     public bool IsGamePlaying() {
-        return gameState == GameState.GamePlaying;
+        return gameState == GameState.GamePlaying && !IsGamePaused();
     }
 
     public bool IsCountdownToStartActive() {
@@ -97,5 +124,9 @@ public class KitchenGameManager : MonoBehaviour
     // Return progress of the game playing timer, with 0.0 being started and 1.0 being finished
     public float GetGamePlayingTimerNormalized() {
         return 1 - (gamePlayingTimer / GAME_PLAYING_SECONDS);
+    }
+
+    public bool IsGamePaused() {
+        return isGamePaused;
     }
 }

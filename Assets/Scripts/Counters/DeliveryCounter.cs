@@ -8,6 +8,11 @@ public class DeliveryCounter : BaseCounter
     public static event EventHandler OnAnyDeliverySuccess;
     public static event EventHandler OnAnyDeliveryFailure;
 
+    new public static void ResetStaticData() {
+        OnAnyDeliverySuccess = null;
+        OnAnyDeliveryFailure = null;
+    }
+
     public override void Interact(Player player) {
         // Only accept plates
         KitchenObject playerKitchenObject = player.GetKitchenObject();

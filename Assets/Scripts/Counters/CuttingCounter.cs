@@ -9,6 +9,10 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
 
     public static event EventHandler OnAnyCounterCut;
 
+    new public static void ResetStaticData() {
+        OnAnyCounterCut = null;
+    }
+
     public event EventHandler<IHasProgressBar.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
 

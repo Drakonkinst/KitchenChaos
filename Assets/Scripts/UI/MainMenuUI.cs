@@ -10,6 +10,9 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Button quitButton;
 
     private void Awake() {
+        // Reset timescale in case paused
+        Time.timeScale = 1.0f;
+
         playButton.onClick.AddListener(OnPlayClick);
         quitButton.onClick.AddListener(OnQuitClick);
     }

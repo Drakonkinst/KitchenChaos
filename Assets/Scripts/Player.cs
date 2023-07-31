@@ -21,7 +21,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float turnSpeed = 10f;
-    [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
     [SerializeField] private Transform kitchenObjectHoldPoint;
 
@@ -38,9 +37,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         }
         Instance = this;
         myTranform = transform;
+    }
 
-        gameInput.OnInteractAction += GameInput_OnInteractAction;
-        gameInput.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
+    private void Start() {
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+        GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractAlternateAction;
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
@@ -71,7 +72,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
 
     private void HandleInteractions() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         if(moveDir != Vector3.zero) {
@@ -93,7 +94,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void HandleMovement() {
         // Get input vector
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
 
         // If we want the character to use a walking animation even when stopped by a wall
         //isWalking = inputVector != Vector2.zero;
