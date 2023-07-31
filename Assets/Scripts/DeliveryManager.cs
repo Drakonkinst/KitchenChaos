@@ -8,11 +8,10 @@ public class DeliveryManager : MonoBehaviour
     public event EventHandler OnRecipeSpawned;
     public event EventHandler OnRecipeCompleted;
 
-
     public static DeliveryManager Instance { get; private set; }
 
     private const int WAITING_RECIPES_MAX = 4;
-    private const float SPAWN_RECIPE_TIMER_MAX = 4f;
+    private const float SPAWN_RECIPE_TIMER_MAX = 8f;
 
     [SerializeField] RecipeListSO recipeListSO;
 
@@ -22,6 +21,7 @@ public class DeliveryManager : MonoBehaviour
     private void Awake() {
         Instance = this;
         waitingRecipeSOList = new List<RecipeSO>();
+        spawnRecipeTimer = SPAWN_RECIPE_TIMER_MAX;
     }
 
     private void Update() {
@@ -39,7 +39,8 @@ public class DeliveryManager : MonoBehaviour
         }
     }
 
-    public void DeliverRecipe(PlateKitchenObject plateKitchenObject) {
+    // Return true if successful
+    public bool DeliverRecipe(PlateKitchenObject plateKitchenObject) {
         for (int i = 0; i < waitingRecipeSOList.Count; ++i) {
             RecipeSO waitingRecipeSO = waitingRecipeSOList[i];
 
@@ -77,11 +78,12 @@ public class DeliveryManager : MonoBehaviour
                 OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
 
                 // Stop at the first one, so does not count for multiple of the same order
-                return;
+                return true;
             }
-
-            // Player did not deliver correct recipe
         }
+
+        // Player did not deliver correct recipe
+        return false;
     }
 
     public List<RecipeSO> GetWaitingRecipeSOList() {

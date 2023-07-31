@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cdd4f381cc7f814a9e0a3c5d488dc8c, type: 3}
   m_Name: Cheese
   m_EditorClassIdentifier: 
-  recipeName: Cheese
+  recipeName: '"Just Cheese"'
   kitchenObjectSOList:
   - {fileID: 11400000, guid: 1518c0ab3941af045a2425c61d0c78fd, type: 2}

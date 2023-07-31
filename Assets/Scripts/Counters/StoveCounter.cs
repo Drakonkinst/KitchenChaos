@@ -70,7 +70,7 @@ public class StoveCounter : BaseCounter, IHasProgressBar
             // Fried
             SetFryingTimer(0f);
             GetKitchenObject().DestroySelf();
-            KitchenObject.SpawnKitchenObject(currentFryingRecipeSO.output, this);
+            KitchenObject.SpawnKitchenObject(currentFryingRecipeSO.output, this, true);
             currentFryingRecipeSO = GetFryingRecipeSOForInput(GetKitchenObject().GetKitchenObjectSO());
             UpdateIsFrying();
         }
@@ -90,8 +90,9 @@ public class StoveCounter : BaseCounter, IHasProgressBar
     }
 
     private void UpdateIsFrying() {
+        bool isFrying = currentFryingRecipeSO != null;
         OnFryingStateChanged?.Invoke(this, new OnFryingStateChangedEventArgs {
-            isFrying = IsFrying()
+            isFrying = isFrying
         });
     }
 
@@ -107,9 +108,5 @@ public class StoveCounter : BaseCounter, IHasProgressBar
         OnProgressChanged?.Invoke(this, new IHasProgressBar.OnProgressChangedEventArgs {
             progressNormalized = progressNormalized
         });
-    }
-
-    private bool IsFrying() {
-        return currentFryingRecipeSO != null;
     }
 }

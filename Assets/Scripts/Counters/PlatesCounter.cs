@@ -35,7 +35,7 @@ public class PlatesCounter : BaseCounter
 
         if(player.HasKitchenObject()) {
             // Attempt to put whatever player is holding on a plate and pick it up
-            KitchenObject.SpawnKitchenObject(plateKitchenObjectSO, this);
+            KitchenObject.SpawnKitchenObject(plateKitchenObjectSO, this, true);
             KitchenObject kitchenObject = GetKitchenObject();
 
             bool successfullyAdded = kitchenObject.TryGetPlate(out PlateKitchenObject plateKitchenObject) && plateKitchenObject.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO());

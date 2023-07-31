@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgressBar
 {
+    public static event EventHandler OnAnyCounterCut;
+
     public event EventHandler<IHasProgressBar.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
 
@@ -54,6 +56,7 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
 
                 UpdateProgress(cuttingRecipeSO.cuttingProgressMax);
                 OnCut?.Invoke(this, EventArgs.Empty);
+                OnAnyCounterCut?.Invoke(this, EventArgs.Empty);
 
                 // Replace object if cutting is finished
                 if (cuttingProgress >= cuttingRecipeSO.cuttingProgressMax) {

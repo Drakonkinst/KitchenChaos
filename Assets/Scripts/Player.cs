@@ -9,6 +9,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     public static Player Instance { get; private set; }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public event EventHandler OnPickedUpObject;
 
     public class OnSelectedCounterChangedEventArgs : EventArgs {
         public BaseCounter selectedCounter;
@@ -149,8 +150,13 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         return kitchenObjectHoldPoint;
     }
 
-    public void SetKitchenObject(KitchenObject kitchenObject) {
+    public void SetKitchenObject(KitchenObject kitchenObject, bool silent = false) {
         this.kitchenObject = kitchenObject;
+        if(kitchenObject != null) {
+            if (!silent) {
+                OnPickedUpObject?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     public KitchenObject GetKitchenObject() {

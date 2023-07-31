@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class KitchenObject : MonoBehaviour
 {
-    public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent) {
+    public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent, bool silent = false) {
         Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab);
         KitchenObject kitchenObject = kitchenObjectTransform.GetComponent<KitchenObject>();
-        kitchenObject.SetKitchenObjectParent(kitchenObjectParent);
+        kitchenObject.SetKitchenObjectParent(kitchenObjectParent, silent);
         return kitchenObject;
     }
 
@@ -29,7 +29,7 @@ public class KitchenObject : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent) {
+    public void SetKitchenObjectParent(IKitchenObjectParent kitchenObjectParent, bool silent = false) {
         // Unset from previous parent if it exists
         if(this.kitchenObjectParent != null) {
             this.kitchenObjectParent.ClearKitchenObject();
@@ -40,7 +40,7 @@ public class KitchenObject : MonoBehaviour
         if(kitchenObjectParent.HasKitchenObject()) {
             Debug.LogError("Kitchen object parent already has a KitchenObject!");
         }
-        kitchenObjectParent.SetKitchenObject(this);
+        kitchenObjectParent.SetKitchenObject(this, silent);
 
         // Update position and hierarchy
         transform.parent = kitchenObjectParent.GetKitchenObjectFollowTransform();
