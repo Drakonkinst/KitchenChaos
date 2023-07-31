@@ -12,19 +12,25 @@ public class DeliveryManager : MonoBehaviour
 
     private const int WAITING_RECIPES_MAX = 4;
     private const float SPAWN_RECIPE_TIMER_MAX = 8f;
+    private const float SPAWN_RECIPE_START_DELAY = 3f;
 
     [SerializeField] RecipeListSO recipeListSO;
 
     private List<RecipeSO> waitingRecipeSOList;
     private float spawnRecipeTimer;
+    private int successfulRecipesAmount = 0;
 
     private void Awake() {
         Instance = this;
         waitingRecipeSOList = new List<RecipeSO>();
-        spawnRecipeTimer = SPAWN_RECIPE_TIMER_MAX;
+        spawnRecipeTimer = SPAWN_RECIPE_START_DELAY;
     }
 
     private void Update() {
+        if (!KitchenGameManager.Instance.IsGamePlaying()) {
+            return;
+        }
+
         spawnRecipeTimer -= Time.deltaTime;
         if (spawnRecipeTimer <= 0f) {
             spawnRecipeTimer = SPAWN_RECIPE_TIMER_MAX;
@@ -74,6 +80,7 @@ public class DeliveryManager : MonoBehaviour
                 // Remove it from the list
                 // No need for backwards iteration here since there is only one removal at most
                 waitingRecipeSOList.RemoveAt(i);
+                successfulRecipesAmount++;
 
                 OnRecipeCompleted?.Invoke(this, EventArgs.Empty);
 
@@ -88,5 +95,9 @@ public class DeliveryManager : MonoBehaviour
 
     public List<RecipeSO> GetWaitingRecipeSOList() {
         return waitingRecipeSOList;
+    }
+    
+    public int GetSuccessfulRecipesAmount() {
+        return successfulRecipesAmount;
     }
 }

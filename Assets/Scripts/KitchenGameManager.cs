@@ -9,9 +9,9 @@ public class KitchenGameManager : MonoBehaviour
 
     public event EventHandler OnStateChanged;
 
-    private const float WAIT_TO_START_SECONDS = 1f;
+    private const float WAIT_TO_START_SECONDS = 0.5f;
     private const float COUNTDOWN_TO_START_SECONDS = 3f;
-    private const float GAME_PLAYING_SECONDS = 10f;
+    private const float GAME_PLAYING_SECONDS = 30f;
 
     private enum GameState {
         WaitingToStart,
@@ -86,7 +86,16 @@ public class KitchenGameManager : MonoBehaviour
         return gameState == GameState.CountdownToStart;
     }
 
+    public bool IsGameOver() {
+        return gameState == GameState.GameOver;
+    }
+
     public float GetCountdownToStartTimer() {
         return countdownToStartTimer;
+    }
+
+    // Return progress of the game playing timer, with 0.0 being started and 1.0 being finished
+    public float GetGamePlayingTimerNormalized() {
+        return 1 - (gamePlayingTimer / GAME_PLAYING_SECONDS);
     }
 }

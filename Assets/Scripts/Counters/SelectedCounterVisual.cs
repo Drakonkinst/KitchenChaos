@@ -9,10 +9,11 @@ public class SelectedCounterVisual : MonoBehaviour
 
     private void Start() {
         Player.Instance.OnSelectedCounterChanged += Player_OnSelectedCounterChanged;
+        Hide();
     }
 
     private void Player_OnSelectedCounterChanged(object sender, Player.OnSelectedCounterChangedEventArgs e) {
-        if(e.selectedCounter == baseCounter) {
+        if(e.selectedCounter == baseCounter && KitchenGameManager.Instance.IsGamePlaying()) {
             Show();
         } else {
             Hide();
