@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgressBar
 {
+    private const float DUMMY_MAX_PROGRESS = 1f;
+
     public static event EventHandler OnAnyCounterCut;
 
     public event EventHandler<IHasProgressBar.OnProgressChangedEventArgs> OnProgressChanged;
@@ -25,21 +27,19 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
             // Only place if valid cuttable object
             if(HasRecipeForInput(kitchenObject.GetKitchenObjectSO())) {
                 kitchenObject.SetKitchenObjectParent(this);
-                cuttingProgress = 0;
-                
-                KitchenObjectSO inputKitchenObjectSO = GetKitchenObject().GetKitchenObjectSO();
-                CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOForInput(inputKitchenObjectSO);
-                UpdateProgress(cuttingRecipeSO.cuttingProgressMax);
+                ClearProgress();
             }
         } else if (hasKitchenObject && !playerHasKitchenObject) {
             // Player takes kitchen object from counter
             GetKitchenObject().SetKitchenObjectParent(player);
+            ClearProgress();
         } else if (hasKitchenObject && playerHasKitchenObject && player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject)) {
             // Player is holding a plate
             KitchenObject kitchenObject = GetKitchenObject();
             bool successfullyAdded = plateKitchenObject.TryAddIngredient(kitchenObject.GetKitchenObjectSO());
             if (successfullyAdded) {
                 kitchenObject.DestroySelf();
+                ClearProgress();
             }
         }
     }
@@ -87,6 +87,13 @@ public class CuttingCounter : BaseCounter, IHasProgressBar
             }
         }
         return null;
+    }
+
+    private void ClearProgress() {
+        cuttingProgress = 0;
+        // Max progress doesn't matter when cutting progress is 0
+        // If we want to know the max progress at all times (like a segmented bar), would be better to cache to current cutting recipe
+        UpdateProgress(DUMMY_MAX_PROGRESS);
     }
 
     private void UpdateProgress(float cuttingProgressMax) {
