@@ -5,12 +5,26 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    private const string PLAYER_PREFS_EFFECTS_VOLUME = "EffectsVolume";
+
+    private const int MAX_VOLUME_STEP = 10;
+    private const float VOLUME_STEP_TO_VOLUME = 0.1f;
+
     public static SoundManager Instance { get; private set; }
+
+    public event EventHandler<OnVolumeChangedEventArgs> OnVolumeChanged;
+
+    public class OnVolumeChangedEventArgs : EventArgs {
+        public float normalizedVolume;
+    }
 
     [SerializeField] private AudioClipRefsSO audioClipRefsSO;
 
+    private int currentVolumeStep;
+
     private void Awake() {
-        SoundManager.Instance = this;
+        Instance = this;
+        SetVolumeStep(PlayerPrefs.GetInt(PLAYER_PREFS_EFFECTS_VOLUME, MAX_VOLUME_STEP));
     }
 
     private void Start() {
@@ -26,13 +40,13 @@ public class SoundManager : MonoBehaviour
         PlaySound(audioClipRefsSO.footstep, position, volume);
     }
 
-    private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volume = 1f) {
+    private void PlaySound(AudioClip[] audioClipArray, Vector3 position, float volumeMultiplier = 1f) {
         AudioClip randomSound = audioClipArray[UnityEngine.Random.Range(0, audioClipArray.Length)];
-        PlaySound(randomSound, position, volume);
+        PlaySound(randomSound, position, volumeMultiplier);
     }
 
-    private void PlaySound(AudioClip audioClip, Vector3 position, float volume = 1f) {
-        AudioSource.PlayClipAtPoint(audioClip, position, volume);
+    private void PlaySound(AudioClip audioClip, Vector3 position, float volumeMultiplier = 1f) {
+        AudioSource.PlayClipAtPoint(audioClip, position, currentVolumeStep * VOLUME_STEP_TO_VOLUME * volumeMultiplier);
     }
 
     private void TrashCounter_OnAnyObjectTrashed(object sender, EventArgs e) {
@@ -62,5 +76,23 @@ public class SoundManager : MonoBehaviour
     private void DeliveryManager_OnRecipeFailure(object sender, EventArgs e) {
         DeliveryCounter deliveryCounter = sender as DeliveryCounter;
         PlaySound(audioClipRefsSO.deliveryFailed, deliveryCounter.transform.position);
+    }
+
+    public void ChangeVolume() {
+        SetVolumeStep((currentVolumeStep + 1) % MAX_VOLUME_STEP);
+
+        PlayerPrefs.SetInt(PLAYER_PREFS_EFFECTS_VOLUME, currentVolumeStep);
+        PlayerPrefs.Save();
+    }
+
+    private void SetVolumeStep(int volumeStep) {
+        currentVolumeStep = volumeStep;
+        OnVolumeChanged?.Invoke(this, new OnVolumeChangedEventArgs {
+            normalizedVolume = currentVolumeStep * VOLUME_STEP_TO_VOLUME
+        });
+    }
+
+    public int GetVolumeStep() {
+        return currentVolumeStep;
     }
 }

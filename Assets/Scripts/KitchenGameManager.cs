@@ -13,7 +13,7 @@ public class KitchenGameManager : MonoBehaviour
 
     private const float WAIT_TO_START_SECONDS = 0.5f;
     private const float COUNTDOWN_TO_START_SECONDS = 3f;
-    private const float GAME_PLAYING_SECONDS = 30f;
+    private const float GAME_PLAYING_SECONDS = 2 * 60f;
 
     private enum GameState {
         WaitingToStart,

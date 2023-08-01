@@ -12,28 +12,38 @@ public class StoveCounterAudio : MonoBehaviour
 
     private AudioSource audioSource;
     private bool audioShouldPlay = false;
+    private float volumeMultiplier = 1f;
+    private float volume;
 
     private void Awake() {
         audioSource = GetComponent<AudioSource>();
-        audioSource.volume = MIN_VOLUME;
+        volume = MIN_VOLUME;
         stoveCounter.OnFryingStateChanged += StoveCounter_OnFryingStateChanged;
     }
 
+    private void Start() {
+        SoundManager.Instance.OnVolumeChanged += SoundManager_OnVolumeChanged;
+    }
+
     private void Update() {
-        float newVolume = audioSource.volume;
         if(audioShouldPlay) {
-            newVolume += audioFadePerSecond * Time.deltaTime;
+            volume += audioFadePerSecond * Time.deltaTime;
         } else {
-            newVolume -= audioFadePerSecond * Time.deltaTime;
+            volume -= audioFadePerSecond * Time.deltaTime;
         }
 
-        if(newVolume <= MIN_VOLUME && audioSource.isPlaying) {
+        if(volume <= MIN_VOLUME && audioSource.isPlaying) {
             audioSource.Pause();
-        } else if(newVolume > MIN_VOLUME && !audioSource.isPlaying) {
+        } else if(volume > MIN_VOLUME && !audioSource.isPlaying) {
             audioSource.Play();
         }
 
-        audioSource.volume = Mathf.Clamp(newVolume, MIN_VOLUME, MAX_VOLUME);
+        volume = Mathf.Clamp(volume, MIN_VOLUME, MAX_VOLUME);
+        audioSource.volume = volume * volumeMultiplier; 
+    }
+
+    private void SoundManager_OnVolumeChanged(object sender, SoundManager.OnVolumeChangedEventArgs e) {
+        volumeMultiplier = e.normalizedVolume;
     }
 
     private void StoveCounter_OnFryingStateChanged(object sender, StoveCounter.OnFryingStateChangedEventArgs e) {
