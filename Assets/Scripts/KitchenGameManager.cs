@@ -11,9 +11,11 @@ public class KitchenGameManager : MonoBehaviour
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameUnpaused;
 
-    private const float WAIT_TO_START_SECONDS = 0.5f;
-    private const float COUNTDOWN_TO_START_SECONDS = 3f;
-    private const float GAME_PLAYING_SECONDS = 2 * 60f;
+    private const float WAIT_TO_START_SECONDS_MAX = 1f;
+    private const float COUNTDOWN_TO_START_SECONDS_MAX = 3f;
+    private const float GAME_PLAYING_SECONDS_MAX = 64f;
+    private const float RECIPE_SUCCESS_BONUS = 8f;
+    private const float RECIPE_FAILURE_PENALTY = 8f;
 
     private enum GameState {
         WaitingToStart,
@@ -23,9 +25,10 @@ public class KitchenGameManager : MonoBehaviour
     }
 
     private GameState gameState;
-    private float waitingToStartTimer = WAIT_TO_START_SECONDS;
-    private float countdownToStartTimer = COUNTDOWN_TO_START_SECONDS;
-    private float gamePlayingTimer = GAME_PLAYING_SECONDS;
+    private float waitingToStartTimer = WAIT_TO_START_SECONDS_MAX;
+    private float countdownToStartTimer = COUNTDOWN_TO_START_SECONDS_MAX;
+    private float gamePlayingTimer = GAME_PLAYING_SECONDS_MAX;
+    private float timeSurvived = 0f;
     private bool isGamePaused = false;
 
     private void Awake() {
@@ -35,6 +38,20 @@ public class KitchenGameManager : MonoBehaviour
 
     private void Start() {
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
+        DeliveryCounter.OnAnyDeliverySuccess += DeliveryCounter_OnAnyDeliverySuccess;
+        DeliveryCounter.OnAnyDeliveryFailure += DeliveryCounter_OnAnyDeliveryFailure;
+    }
+
+    private void DeliveryCounter_OnAnyDeliverySuccess(object sender, EventArgs e) {
+        gamePlayingTimer = Mathf.Clamp(gamePlayingTimer + RECIPE_SUCCESS_BONUS, 0f, GAME_PLAYING_SECONDS_MAX);
+    }
+
+    private void DeliveryCounter_OnAnyDeliveryFailure(object sender, EventArgs e) {
+        if (gamePlayingTimer < RECIPE_FAILURE_PENALTY) {
+            // No penalty if the penalty would instantly end the game
+            return;
+        }
+        gamePlayingTimer = Mathf.Clamp(gamePlayingTimer - RECIPE_FAILURE_PENALTY, 0f, GAME_PLAYING_SECONDS_MAX);
     }
 
     private void GameInput_OnPauseAction(object sender, EventArgs e) {
@@ -78,6 +95,7 @@ public class KitchenGameManager : MonoBehaviour
 
     private void HandleGamePlayingState() {
         gamePlayingTimer -= Time.deltaTime;
+        timeSurvived += Time.deltaTime;
         if (gamePlayingTimer < 0f) {
             SetGameState(GameState.GameOver);
         }
@@ -102,7 +120,6 @@ public class KitchenGameManager : MonoBehaviour
     private void SetGameState(GameState gameState) {
         this.gameState = gameState;
         OnStateChanged?.Invoke(this, EventArgs.Empty);
-        Debug.Log(gameState);
     }
 
     public bool IsGamePlaying() {
@@ -123,10 +140,14 @@ public class KitchenGameManager : MonoBehaviour
 
     // Return progress of the game playing timer, with 0.0 being started and 1.0 being finished
     public float GetGamePlayingTimerNormalized() {
-        return 1 - (gamePlayingTimer / GAME_PLAYING_SECONDS);
+        return 1 - (gamePlayingTimer / GAME_PLAYING_SECONDS_MAX);
     }
 
     public bool IsGamePaused() {
         return isGamePaused;
+    }
+
+    public float GetTimeSurvived() {
+        return timeSurvived;
     }
 }

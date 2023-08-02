@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI recipesDeliveredText;
+    [SerializeField] TextMeshProUGUI timeSurvivedText;
 
     private void Start() {
         KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
@@ -17,6 +18,7 @@ public class GameOverUI : MonoBehaviour
         if (KitchenGameManager.Instance.IsGameOver()) {
             Show();
             recipesDeliveredText.text = DeliveryManager.Instance.GetSuccessfulRecipesAmount().ToString();
+            timeSurvivedText.text = ("You survived " + Mathf.Floor(KitchenGameManager.Instance.GetTimeSurvived()).ToString() + " seconds of chaos").ToUpper();
         } else {
             Hide();
         }
