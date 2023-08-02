@@ -6,6 +6,8 @@ using static CuttingCounter;
 
 public class StoveCounter : BaseCounter, IHasProgressBar
 {
+    private const float WARNING_PROGRESS_THRESHOLD = 0.5f;
+
     public event EventHandler<OnFryingStateChangedEventArgs> OnFryingStateChanged;
     public event EventHandler<IHasProgressBar.OnProgressChangedEventArgs> OnProgressChanged;
     
@@ -90,7 +92,7 @@ public class StoveCounter : BaseCounter, IHasProgressBar
     }
 
     private void UpdateIsFrying() {
-        bool isFrying = currentFryingRecipeSO != null;
+        bool isFrying = IsFrying();
         OnFryingStateChanged?.Invoke(this, new OnFryingStateChangedEventArgs {
             isFrying = isFrying
         });
@@ -99,14 +101,24 @@ public class StoveCounter : BaseCounter, IHasProgressBar
     private void SetFryingTimer(float fryingTimer) {
         this.fryingTimer = fryingTimer;
 
-        // Progress is 0 if there is no frying recipe, otherwise base it off the max seconds
-        float progressNormalized = 0f;
-        if (currentFryingRecipeSO != null) {
-            progressNormalized = Mathf.Clamp01(fryingTimer / currentFryingRecipeSO.fryingTimeSeconds);
-        }
-
         OnProgressChanged?.Invoke(this, new IHasProgressBar.OnProgressChangedEventArgs {
-            progressNormalized = progressNormalized
+            progressNormalized = GetProgressNormalized()
         });
+    }
+
+    // Progress is 0 if there is no frying recipe, otherwise base it off the max seconds
+    private float GetProgressNormalized() {
+        if (currentFryingRecipeSO == null) {
+            return 0f;
+        }
+        return Mathf.Clamp01(fryingTimer / currentFryingRecipeSO.fryingTimeSeconds);
+    }
+
+    private bool IsFrying() {
+        return currentFryingRecipeSO != null;
+    }
+
+    public bool IsBurning() {
+        return IsFrying() && currentFryingRecipeSO.burning && GetProgressNormalized() >= WARNING_PROGRESS_THRESHOLD;
     }
 }

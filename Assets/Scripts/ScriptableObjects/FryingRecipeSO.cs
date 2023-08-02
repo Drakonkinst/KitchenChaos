@@ -8,4 +8,5 @@ public class FryingRecipeSO : ScriptableObject
     public KitchenObjectSO input;
     public KitchenObjectSO output;
     public float fryingTimeSeconds;
+    public bool burning;
 }

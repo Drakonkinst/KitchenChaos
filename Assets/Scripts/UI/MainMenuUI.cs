@@ -13,10 +13,7 @@ public class MainMenuUI : MonoBehaviour
         // Reset timescale in case paused
         Time.timeScale = 1.0f;
 
-        playButton.onClick.AddListener(() => {
-            Debug.Log("PLAY");
-            OnPlayClick();
-        });
+        playButton.onClick.AddListener(OnPlayClick);
         quitButton.onClick.AddListener(OnQuitClick);
     }
 

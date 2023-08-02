@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static SoundManager;
 
 public class MusicManager : MonoBehaviour
 {
@@ -20,12 +19,24 @@ public class MusicManager : MonoBehaviour
         Instance = this;
         audioSource = GetComponent<AudioSource>();
 
-        defaultInitialVolumeStep = (int) Mathf.Round(audioSource.volume * MAX_VOLUME_STEP);
+        defaultInitialVolumeStep = Mathf.RoundToInt(audioSource.volume * MAX_VOLUME_STEP);
         SetVolumeStep(PlayerPrefs.GetInt(PLAYER_PREFS_MUSIC_VOLUME, defaultInitialVolumeStep));
     }
 
+    private void Start() {
+        KitchenGameManager.Instance.OnStateChanged += KitchenGameManager_OnStateChanged;
+    }
+
+    private void KitchenGameManager_OnStateChanged(object sender, System.EventArgs e) {
+        if (KitchenGameManager.Instance.IsGamePlaying()) {
+            PlayMusic();
+        } else if (KitchenGameManager.Instance.IsGameOver()) {
+            PauseMusic();
+        }
+    }
+
     public void ChangeVolume() {
-        SetVolumeStep((currentVolumeStep + 1) % MAX_VOLUME_STEP);
+        SetVolumeStep((currentVolumeStep + 1) % (MAX_VOLUME_STEP + 1));
     }
 
     public void ResetVolume() {
@@ -41,5 +52,13 @@ public class MusicManager : MonoBehaviour
 
     public int GetVolumeStep() {
         return currentVolumeStep;
+    }
+
+    public void PlayMusic() {
+        audioSource.Play();
+    }
+
+    public void PauseMusic() {
+        audioSource.Pause();
     }
 }

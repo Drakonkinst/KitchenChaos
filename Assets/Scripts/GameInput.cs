@@ -30,6 +30,7 @@ public class GameInput : MonoBehaviour
     public event EventHandler OnInteractAlternateAction;
     public event EventHandler OnPauseAction;
     public event EventHandler OnControlSchemeChanged;
+    public event EventHandler OnBindingRebind;
 
     private PlayerInput playerInput;    // This is used solely to determine active control scheme, no events attached
     private PlayerInputActions playerInputActions;
@@ -128,7 +129,6 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Disable();
         (InputAction inputAction, int bindingIndex) = BindingToInputAction(binding);
         string bindingGroupName = IsUsingGamepad() ? CONTROL_SCHEME_GAMEPAD : CONTROL_SCHEME_KEYBOARD;
-        Debug.Log("USING " + bindingGroupName);
         inputAction.PerformInteractiveRebinding(bindingIndex)
             .WithBindingGroup(bindingGroupName)
             .OnComplete((callback) => {
@@ -138,6 +138,8 @@ public class GameInput : MonoBehaviour
 
                 PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, playerInputActions.SaveBindingOverridesAsJson());
                 PlayerPrefs.Save();
+
+                OnBindingRebind?.Invoke(this, EventArgs.Empty);
             })
             .Start();
         return true;

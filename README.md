@@ -5,6 +5,7 @@ Following along with [CodeMonkey's Unity tutorial](https://www.youtube.com/watch
 Major changes from the tutorial game:
 
 * Added time bonuses and penalties to make Kitchen Chaos a game about survival instead of just speed
+* Filled in blank side of the map
 * Implemented a greatly simplified stove recipe system that elegantly avoids unnecessary code duplication and state machines
 * Player continues rotating towards target direction even after they stop moving
 * Made gameplay more intuitive:
@@ -20,3 +21,4 @@ Major changes from the tutorial game:
   * Options menu does not overlay the pause menu
   * Added a "Reset to Defaults" button
   * Options menu smoothly swaps between controller and keyboard options based on which device is active, instead of adding additional UI for controller buttons
+* Music starts playing once the countdown ends, not during the tutorial

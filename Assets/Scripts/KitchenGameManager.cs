@@ -11,7 +11,6 @@ public class KitchenGameManager : MonoBehaviour
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameUnpaused;
 
-    private const float WAIT_TO_START_SECONDS_MAX = 1f;
     private const float COUNTDOWN_TO_START_SECONDS_MAX = 3f;
     private const float GAME_PLAYING_SECONDS_MAX = 64f;
     private const float RECIPE_SUCCESS_BONUS = 8f;
@@ -25,7 +24,6 @@ public class KitchenGameManager : MonoBehaviour
     }
 
     private GameState gameState;
-    private float waitingToStartTimer = WAIT_TO_START_SECONDS_MAX;
     private float countdownToStartTimer = COUNTDOWN_TO_START_SECONDS_MAX;
     private float gamePlayingTimer = GAME_PLAYING_SECONDS_MAX;
     private float timeSurvived = 0f;
@@ -40,6 +38,15 @@ public class KitchenGameManager : MonoBehaviour
         GameInput.Instance.OnPauseAction += GameInput_OnPauseAction;
         DeliveryCounter.OnAnyDeliverySuccess += DeliveryCounter_OnAnyDeliverySuccess;
         DeliveryCounter.OnAnyDeliveryFailure += DeliveryCounter_OnAnyDeliveryFailure;
+
+        GameInput.Instance.OnInteractAction += GameInput_OnInteractAction;
+    }
+
+    private void GameInput_OnInteractAction(object sender, EventArgs e) {
+        // Following the tutorial prompt
+        if (gameState == GameState.WaitingToStart && !isGamePaused) {
+            SetGameState(GameState.CountdownToStart);
+        }
     }
 
     private void DeliveryCounter_OnAnyDeliverySuccess(object sender, EventArgs e) {
@@ -80,10 +87,7 @@ public class KitchenGameManager : MonoBehaviour
     }
 
     private void HandleWaitingToStartState() {
-        waitingToStartTimer -= Time.deltaTime;
-        if (waitingToStartTimer < 0f) {
-            SetGameState(GameState.CountdownToStart);
-        }
+        // Do nothing, wait for user input
     }
 
     private void HandleCountdownToStartState() {
