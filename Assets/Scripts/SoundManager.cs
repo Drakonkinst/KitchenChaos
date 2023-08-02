@@ -8,6 +8,7 @@ public class SoundManager : MonoBehaviour
     private const string PLAYER_PREFS_EFFECTS_VOLUME = "EffectsVolume";
 
     private const int MAX_VOLUME_STEP = 10;
+    private const int INITIAL_VOLUME_STEP = MAX_VOLUME_STEP;
     private const float VOLUME_STEP_TO_VOLUME = 0.1f;
 
     public static SoundManager Instance { get; private set; }
@@ -24,7 +25,7 @@ public class SoundManager : MonoBehaviour
 
     private void Awake() {
         Instance = this;
-        SetVolumeStep(PlayerPrefs.GetInt(PLAYER_PREFS_EFFECTS_VOLUME, MAX_VOLUME_STEP));
+        SetVolumeStep(PlayerPrefs.GetInt(PLAYER_PREFS_EFFECTS_VOLUME, INITIAL_VOLUME_STEP));
     }
 
     private void Start() {
@@ -80,9 +81,10 @@ public class SoundManager : MonoBehaviour
 
     public void ChangeVolume() {
         SetVolumeStep((currentVolumeStep + 1) % MAX_VOLUME_STEP);
+    }
 
-        PlayerPrefs.SetInt(PLAYER_PREFS_EFFECTS_VOLUME, currentVolumeStep);
-        PlayerPrefs.Save();
+    public void ResetVolume() {
+        SetVolumeStep(INITIAL_VOLUME_STEP);
     }
 
     private void SetVolumeStep(int volumeStep) {
@@ -90,6 +92,8 @@ public class SoundManager : MonoBehaviour
         OnVolumeChanged?.Invoke(this, new OnVolumeChangedEventArgs {
             normalizedVolume = currentVolumeStep * VOLUME_STEP_TO_VOLUME
         });
+        PlayerPrefs.SetInt(PLAYER_PREFS_EFFECTS_VOLUME, currentVolumeStep);
+        PlayerPrefs.Save();
     }
 
     public int GetVolumeStep() {

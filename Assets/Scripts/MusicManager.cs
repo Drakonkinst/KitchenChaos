@@ -14,25 +14,29 @@ public class MusicManager : MonoBehaviour
 
     private AudioSource audioSource;
     private int currentVolumeStep;
+    private int defaultInitialVolumeStep;
 
     private void Awake() {
         Instance = this;
         audioSource = GetComponent<AudioSource>();
 
-        int defaultInitialVolumeStep = (int) Mathf.Round(audioSource.volume * MAX_VOLUME_STEP);
+        defaultInitialVolumeStep = (int) Mathf.Round(audioSource.volume * MAX_VOLUME_STEP);
         SetVolumeStep(PlayerPrefs.GetInt(PLAYER_PREFS_MUSIC_VOLUME, defaultInitialVolumeStep));
     }
 
     public void ChangeVolume() {
         SetVolumeStep((currentVolumeStep + 1) % MAX_VOLUME_STEP);
+    }
 
-        PlayerPrefs.SetInt(PLAYER_PREFS_MUSIC_VOLUME, currentVolumeStep);
-        PlayerPrefs.Save();
+    public void ResetVolume() {
+        SetVolumeStep(defaultInitialVolumeStep);
     }
 
     private void SetVolumeStep(int volumeStep) {
         currentVolumeStep = volumeStep;
         audioSource.volume = currentVolumeStep * VOLUME_STEP_TO_VOLUME;
+        PlayerPrefs.SetInt(PLAYER_PREFS_MUSIC_VOLUME, currentVolumeStep);
+        PlayerPrefs.Save();
     }
 
     public int GetVolumeStep() {
