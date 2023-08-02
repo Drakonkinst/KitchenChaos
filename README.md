@@ -4,6 +4,7 @@ Following along with [CodeMonkey's Unity tutorial](https://www.youtube.com/watch
 
 Major changes from the tutorial game:
 
+* Added time bonuses and penalties to make Kitchen Chaos a game about survival instead of just speed
 * Implemented a greatly simplified stove recipe system that elegantly avoids unnecessary code duplication and state machines
 * Player continues rotating towards target direction even after they stop moving
 * Made gameplay more intuitive:
