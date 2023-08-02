@@ -12,9 +12,9 @@ public class KitchenGameManager : MonoBehaviour
     public event EventHandler OnGameUnpaused;
 
     private const float COUNTDOWN_TO_START_SECONDS_MAX = 3f;
-    private const float GAME_PLAYING_SECONDS_MAX = 64f;
-    private const float RECIPE_SUCCESS_BONUS = 8f;
-    private const float RECIPE_FAILURE_PENALTY = 8f;
+    private const float GAME_PLAYING_SECONDS_MAX = 90f;
+    private const float RECIPE_SUCCESS_BONUS = 10f;
+    private const float RECIPE_FAILURE_PENALTY = 5f;
 
     private enum GameState {
         WaitingToStart,

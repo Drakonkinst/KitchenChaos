@@ -18,7 +18,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private const float PLAYER_RADIUS = 0.65f;
     private const float PLAYER_HEIGHT = 2.0f;
     private const float INTERACT_DISTANCE = 2.0f;
-    private const float HUGGING_THRESHOLD = 0.4f;
+    private const float HUGGING_THRESHOLD = 0.5f;
 
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float turnSpeed = 10f;
