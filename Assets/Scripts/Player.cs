@@ -18,6 +18,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     private const float PLAYER_RADIUS = 0.65f;
     private const float PLAYER_HEIGHT = 2.0f;
     private const float INTERACT_DISTANCE = 2.0f;
+    private const float HUGGING_THRESHOLD = 0.4f;
 
     [SerializeField] private float moveSpeed = 7f;
     [SerializeField] private float turnSpeed = 10f;
@@ -126,15 +127,19 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         }
 
         // Cannot move towards moveDir, attempt only X movement
-        Vector3 moveDirX = new Vector3(moveDir.x, 0f, 0f).normalized;
-        if(CanMoveInDir(moveDirX, moveDistance)) {
-            return moveDirX;
+        if(Mathf.Abs(moveDir.x) >= HUGGING_THRESHOLD) {
+            Vector3 moveDirX = new Vector3(moveDir.x, 0f, 0f).normalized;
+            if(CanMoveInDir(moveDirX, moveDistance)) {
+                return moveDirX;
+            }
         }
 
         // Cannot move towards X, attempt only Z movement
-        Vector3 moveDirZ = new Vector3(0f, 0f, moveDir.z).normalized;
-        if(CanMoveInDir(moveDirZ, moveDistance)) {
-            return moveDirZ;
+        if(Mathf.Abs(moveDir.z) >= HUGGING_THRESHOLD) {
+            Vector3 moveDirZ = new Vector3(0f, 0f, moveDir.z).normalized;
+            if (CanMoveInDir(moveDirZ, moveDistance)) {
+                return moveDirZ;
+            }
         }
 
         // Cannot move
