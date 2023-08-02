@@ -1,24 +1,47 @@
 # Kitchen Chaos
 
-Following along with [CodeMonkey's Unity tutorial](https://www.youtube.com/watch?v=AmGSEH7QcDg&ab_channel=CodeMonkey)
+**Kitchen Chaos** is a small kitchen simulator game built in Unity.
 
-Major changes from the tutorial game:
+I followed along with [CodeMonkey's 10-hour Unity tutorial](https://www.youtube.com/watch?v=AmGSEH7QcDg&ab_channel=CodeMonkey) to create this game. The original game by CodeMonkey is [published on Steam](https://store.steampowered.com/app/2275820/Kitchen_Chaos__Learn_Game_Development/), but my version includes additional features detailed below.
 
-* Added time bonuses and penalties to make Kitchen Chaos a game about survival instead of just speed
-* Filled in blank side of the map
-* Implemented a greatly simplified stove recipe system that elegantly avoids unnecessary code duplication and state machines
-* Player continues rotating towards target direction even after they stop moving
-* Made gameplay more intuitive:
-  * Plates can interact with container counters directly to get their item
-  * Player can interact with plate counter directly to put whatever they are holding onto a plate
-* Added dynamic fading sound effect to frying stove
-* Added additional logic to generate items silently to avoid unnecessary event firing or sound effects
-* Delivery counter is not implemented as a singleton to support multiple delivery counters at once
+From the Steam page:
+
+> The customers are hungry, it's up to you to fill them up!
+>
+> Pick up some ingredients, prepare them, put them on a plate and deliver them.
+> Work with the various counters to prepare them.
+> Pick up a full Cheese block, cut it into slices, then cook a Meat Patty (but don't let it burn!), pick them up on a Plate, add some Bread and you have a nice burger!
+>
+> Features:
+>
+> * 7 Ingredients to use
+> * 3 Complete Recipes to create
+> * 6 unique Kitchen Counters to interact with
+
+## Changes From Tutorial Game
+
+### Gameplay
+
+* Added time bonuses for delivering recipes successfully and time penalties for delivering the wrong recipes, so the game runs longer the more efficient the player is.
+* Added an additional delivery counter, patty container counter, and plate counter to the unused corner of the map
+* Added several quality of life features to make gameplay more intuitive:
+  * Interacting with a container counter while holding a plate puts the container's item directly onto the plate
+  * Interating with a plate counter while holding a valid item puts that item on a plate
+* Player visually rotates towards target direction even after they stop moving
+* Music starts playing once the countdown ends, and stops when the game ends
+
+### Technical
+
+* Implemented a greatly simplified stove recipe system that avoids unnecessary code duplication and state machines
+* Added dynamic fading in/out of stove frying audio
+* Added additional logic to generate items silently to avoid unwanted sound effects
+* Volume options properly affect all sounds, including frying and footstep sounds that are not managed by the main sound manager
+* Made volume cycling more consistent by using integers instead of floats, avoiding floating point errors
+* Implemented the delivery counter without using singletons to support multiple delivery counters at once
+
+### User Interface
+
 * Made options menu more robust
-  * Modified user interface to be more readable and intuitive
-  * Volume options properly affect all sounds, including those not managed by SoundManager (frying and footstep sounds)
-  * Volume cycling is more consistent by using integers instead of floats, avoiding floating point errors
-  * Options menu does not overlay the pause menu
+  * Rearranged user interface to be more readable and intuitive
   * Added a "Reset to Defaults" button
-  * Options menu smoothly swaps between controller and keyboard options based on which device is active, instead of adding additional UI for controller buttons
-* Music starts playing once the countdown ends, not during the tutorial
+  * Options menu smoothly swaps between displaying controller and keyboard bindings based on which device is active instead of using additional UI
