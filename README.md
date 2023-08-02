@@ -18,3 +18,4 @@ Major changes from the tutorial game:
   * Volume cycling is more consistent by using integers instead of floats, avoiding floating point errors
   * Options menu does not overlay the pause menu
   * Added a "Reset to Defaults" button
+  * Options menu smoothly swaps between controller and keyboard options based on which device is active, instead of adding additional UI for controller buttons

@@ -7,6 +7,8 @@ using UnityEngine.InputSystem;
 public class GameInput : MonoBehaviour
 {
     private const string PLAYER_PREFS_BINDINGS = "Bindings";
+    private const string CONTROL_SCHEME_KEYBOARD = "Keyboard";
+    private const string CONTROL_SCHEME_GAMEPAD = "Gamepad";
 
     public static GameInput Instance { get; private set; }
 
@@ -17,23 +19,38 @@ public class GameInput : MonoBehaviour
         MoveRight,
         Interact,
         InteractAlternate,
-        Pause
+        Pause,
+        Gamepad_Interact,
+        Gamepad_InteractAlternate,
+        Gamepad_Pause,
+        None
     }
     
     public event EventHandler OnInteractAction;
     public event EventHandler OnInteractAlternateAction;
     public event EventHandler OnPauseAction;
+    public event EventHandler OnControlSchemeChanged;
 
+    private PlayerInput playerInput;    // This is used solely to determine active control scheme, no events attached
     private PlayerInputActions playerInputActions;
 
     private void Awake() {
         Instance = this;
+        playerInput = GetComponent<PlayerInput>();
+        playerInput.onControlsChanged += PlayerInput_onControlsChanged;
         SetupInputActions();
+    }
+
+    private void PlayerInput_onControlsChanged(PlayerInput obj) {
+        OnControlSchemeChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDestroy() {
         // Unsubscribe input since this is not automatically destroyed when leaving the scene
         playerInputActions.Dispose();
+    }
+
+    private void Update() {
     }
 
     private void SetupInputActions() {
@@ -84,6 +101,12 @@ public class GameInput : MonoBehaviour
                 return (playerInputActions.Player.InteractAlternate, 0);
             case Binding.Pause:
                 return (playerInputActions.Player.Pause, 0);
+            case Binding.Gamepad_Interact:
+                return (playerInputActions.Player.Interact, 1);
+            case Binding.Gamepad_InteractAlternate:
+                return (playerInputActions.Player.InteractAlternate, 1);
+            case Binding.Gamepad_Pause:
+                return (playerInputActions.Player.Pause, 1);
             default:
                 return (null, -1);
         }
@@ -92,15 +115,22 @@ public class GameInput : MonoBehaviour
     public string GetBindingText(Binding binding) {
         (InputAction inputAction, int bindingIndex) = BindingToInputAction(binding);
         if(inputAction == null) {
-            return "???";
+            return "-";
         }
         return inputAction.bindings[bindingIndex].ToDisplayString();
     }
 
-    public void RebindBinding(Binding binding, Action onActionRebound) {
+    public bool RebindBinding(Binding binding, Action onActionRebound) {
+        if(binding == Binding.None) {
+            return false;
+        }
+
         playerInputActions.Player.Disable();
         (InputAction inputAction, int bindingIndex) = BindingToInputAction(binding);
+        string bindingGroupName = IsUsingGamepad() ? CONTROL_SCHEME_GAMEPAD : CONTROL_SCHEME_KEYBOARD;
+        Debug.Log("USING " + bindingGroupName);
         inputAction.PerformInteractiveRebinding(bindingIndex)
+            .WithBindingGroup(bindingGroupName)
             .OnComplete((callback) => {
                 callback.Dispose();
                 playerInputActions.Player.Enable();
@@ -110,6 +140,7 @@ public class GameInput : MonoBehaviour
                 PlayerPrefs.Save();
             })
             .Start();
+        return true;
     }
 
     public void ResetBindings() {
@@ -118,5 +149,13 @@ public class GameInput : MonoBehaviour
         PlayerPrefs.DeleteKey(PLAYER_PREFS_BINDINGS);
         PlayerPrefs.Save();
         SetupInputActions();
+    }
+
+    public bool IsUsingGamepad() {
+        return playerInput.currentControlScheme == CONTROL_SCHEME_GAMEPAD;
+    }
+
+    public bool IsUsingKeyboard() {
+        return playerInput.currentControlScheme == CONTROL_SCHEME_KEYBOARD;
     }
 }
